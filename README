@@ -1,0 +1,37 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=4948
+
+DESCRIPTION
+The built-in search via /, n, and N does its job. But sometimes, it
+would be nice to have a custom search that is limited to a certain range, or
+the first match in a line, or certain syntax groups, or a search that doesn't
+open folds. This plugin offers generic functions that can be used to easily
+build such custom search mappings for special searches. A predicate function
+can specify which matches are skipped, and options control the behavior with
+regards to folding and jumps.
+
+SEE ALSO
+The following custom searches use this plugin:
+
+SearchForExpr:              Search where pattern matches and a passed
+                            expression evaluates to true.
+
+USAGE
+This plugin defines several functions. The following is an overview; you'll
+find the details directly in the implementation files in the .vim/autoload/
+directory.
+
+SearchSpecial#SearchWithout( searchPattern, isBackward, Predicate, predicateId, predicateDescription, count, ... )
+
+The main helper function that jumps to the next match of a:searchPattern,
+skipping all those matches where a:Predicate returns false.
+
+EXAMPLE
+Here's a simple search mapping that emulates the default search (because it
+doesn't pass a predicate that limits the matches, nor are there any options):
+    nnoremap <silent> ,n
+    \   :<C-u>if SearchSpecial#SearchWithout(@/, 0, '', 'default', '', v:count1)<Bar>
+    \   if &hlsearch<Bar>set hlsearch<Bar>endif<Bar>
+    \   else<Bar>echoerr ingo#err#Get()<Bar>endif<CR>
+The 'hlsearch' handling cannot be done in a function; and any "Pattern not
+found" error is raised directly from the mapping; that's the boilerplate code
+at the end of the mapping.
